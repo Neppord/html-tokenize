@@ -1,20 +1,14 @@
+var timeit = require("timeit-async");
 var fs = require('fs');
 var tokenize = require('../');
 var through = require('through2');
 
 var src = fs.readFileSync(__dirname + '/input.html');
-var start = Date.now();
-var times = 100;
 
-(function perf (n) {
-    if (n === times) {
-        console.log(((Date.now() - start) / times) + ' milliseconds');
-        return;
-    }
+function write (row, enc, next) { next(); }
+
+timeit(function (done){
     var t = tokenize();
-    t.pipe(through.obj(write, end));
+    t.pipe(through.obj(write, done));
     t.end(src);
-    
-    function write (row, enc, next) { next() }
-    function end () { perf(n + 1) }
-})(0);
+}, 10, 10, console.log);
