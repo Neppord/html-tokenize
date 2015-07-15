@@ -230,7 +230,7 @@ Tokenize.prototype._testRaw = function (buf, offset, index) {
     if (!compare(last, raw)) return;
     
     this.buffers.push(buf.slice(offset, index + 1));
-    var buf = Buffer.concat(this.buffers);
+    buf = Buffer.concat(this.buffers);
     var k = buf.length - raw.length;
     return [ buf.slice(0, k), buf.slice(k) ];
 };
