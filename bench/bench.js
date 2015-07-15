@@ -3,12 +3,16 @@ var tokenize = require('../');
 var through = require('through2');
 
 var src = fs.readFileSync(__dirname + '/input.html');
-var start = Date.now();
-var times = 100;
+var times = 1000;
 
-(function perf (n) {
+(function perf (n, run_times) {
+    var start = process.hrtime();
     if (n === times) {
-        console.log(((Date.now() - start) / times) + ' milliseconds');
+        run_times.sort(function (a, b) {
+          return a - b;
+        });
+        var fastest = run_times[0];
+        console.log(fastest + ' nanoseconds');
         return;
     }
     var t = tokenize();
@@ -16,5 +20,8 @@ var times = 100;
     t.end(src);
     
     function write (row, enc, next) { next() }
-    function end () { perf(n + 1) }
-})(0);
+    function end () {
+        run_times.push(process.hrtime(start)[1]);
+        perf(n + 1, run_times);
+    }
+})(0, []);
